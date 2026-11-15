@@ -1,0 +1,77 @@
+{
+  "expo": {
+    "name": "PetCare",
+    "slug": "petcare",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "petcare",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#13A08F"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "br.edu.uniceplac.petcare",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Usamos sua localização para mostrar clínicas e campanhas perto de você.",
+        "NSCameraUsageDescription": "Usamos a câmera para tirar fotos do seu pet e de animais em alertas.",
+        "NSPhotoLibraryUsageDescription": "Usamos suas fotos para a foto do pet e dos alertas."
+      }
+    },
+    "android": {
+      "package": "br.edu.uniceplac.petcare",
+      "adaptiveIcon": {
+        "backgroundColor": "#13A08F",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "CAMERA",
+        "POST_NOTIFICATIONS",
+        "SCHEDULE_EXACT_ALARM"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "name": "PetCare",
+      "shortName": "PetCare",
+      "lang": "pt-BR",
+      "description": "Saúde e cuidados do seu pet em um só lugar.",
+      "themeColor": "#13A08F",
+      "backgroundColor": "#F7F9FC",
+      "output": "single",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-font",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Usamos sua localização para mostrar clínicas e campanhas perto de você."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Usamos suas fotos para a foto do pet e dos alertas.",
+          "cameraPermission": "Usamos a câmera para tirar fotos do seu pet e de animais em alertas."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#13A08F"
+        }
+      ]
+    ],
+    "experiments": {
+      "baseUrl": "/PetCare"
+    }
+  }
+}
