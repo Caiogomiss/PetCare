@@ -7,6 +7,7 @@ const { PLACES, GUIDES } = require('../src/data/seed')
 const q = (v) => {
   if (v === null || v === undefined) return 'null'
   if (typeof v === 'number' || typeof v === 'boolean') return String(v)
+  if (Array.isArray(v)) return v.length ? `array[${v.map(q).join(', ')}]::text[]` : 'null'
   return `'${String(v).replace(/'/g, "''")}'`
 }
 

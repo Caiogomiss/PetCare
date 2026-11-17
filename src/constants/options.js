@@ -106,3 +106,20 @@ export const PLACE_CATEGORIES = [
   { value: 'ong', label: 'ONGs', icon: 'users' },
 ]
 export const placeCategory = (value) => PLACE_CATEGORIES.find((c) => c.value === value) || PLACE_CATEGORIES[0]
+
+// ONGs e protetores independentes
+export const ORG_TYPES = {
+  ong: { label: 'ONG', color: '#0C7C6F', bg: '#E4F6F3' },
+  protetor: { label: 'Protetor independente', color: '#7A4FC2', bg: '#F0E9FB' },
+}
+
+export const FORMAS_APOIO = {
+  doacao: { label: 'Doação de ração e itens', icon: 'gift' },
+  voluntariado: { label: 'Voluntariado', icon: 'users' },
+  adocao: { label: 'Adoção', icon: 'heart' },
+  lar_temporario: { label: 'Lar temporário', icon: 'home' },
+  apadrinhamento: { label: 'Apadrinhamento', icon: 'star' },
+}
+
+export const AVISO_DADOS_EXEMPLO =
+  'Nomes, endereços e contatos são exemplos para demonstração e não representam parcerias formais.'

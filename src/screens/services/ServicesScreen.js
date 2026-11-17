@@ -9,7 +9,7 @@ import { useLoad } from '../../hooks/useLoad'
 import { db } from '../../lib/db'
 import { REGIONS, getSavedPosition, getUserPosition, saveRegion } from '../../lib/location'
 import { distanceKm, formatKm, isoToBr, todayIso } from '../../lib/format'
-import { PLACE_CATEGORIES, placeCategory } from '../../constants/options'
+import { AVISO_DADOS_EXEMPLO, ORG_TYPES, PLACE_CATEGORIES, placeCategory } from '../../constants/options'
 import { MSG } from '../../constants/messages'
 import { colors, font, fontSize, radius, spacing } from '../../theme'
 
@@ -34,13 +34,17 @@ export default function ServicesScreen({ navigation, route }) {
   // Parâmetros vindos da tela inicial (atalho ONGs, busca, pedir localização)
   useEffect(() => {
     const p = route.params || {}
+    // Só age quando chega algum parâmetro de verdade. Limpar os parâmetros muda route.params
+    // de novo; sem essa checagem o efeito roda em loop e a tela fica branca.
+    const hasParams = p.categoria !== undefined || p.query !== undefined || p.askLocation !== undefined
+    if (!hasParams) return
     if (p.categoria) setCategoria(p.categoria)
     if (p.query !== undefined) {
       setQuery(p.query)
       setCategoria('todos')
     }
     if (p.askLocation) locate()
-    if (Object.keys(p).length) navigation.setParams({ categoria: undefined, query: undefined, askLocation: undefined })
+    navigation.setParams({ categoria: undefined, query: undefined, askLocation: undefined })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route.params])
 
@@ -110,6 +114,9 @@ export default function ServicesScreen({ navigation, route }) {
       {locError ? <Muted style={{ paddingHorizontal: spacing.xl, color: colors.warning, marginBottom: spacing.sm }}>{locError}</Muted> : null}
 
       <Chips options={FILTERS} value={categoria} onChange={setCategoria} style={{ paddingBottom: spacing.md }} />
+      {categoria === 'ong' ? (
+        <Muted style={{ paddingHorizontal: spacing.xl, marginBottom: spacing.md }}>ONGs e protetores independentes que aceitam ajuda. {AVISO_DADOS_EXEMPLO}</Muted>
+      ) : null}
       <View style={styles.divider} />
       {places && results.length ? (
         <Muted style={{ paddingHorizontal: spacing.xl, marginBottom: spacing.sm }}>
@@ -173,6 +180,7 @@ export default function ServicesScreen({ navigation, route }) {
 
 function PlaceCard({ place, onPress }) {
   const cat = placeCategory(place.categoria)
+  const org = ORG_TYPES[place.tipo_org]
   const isCampaign = Boolean(place.data_inicio)
   const today = todayIso()
   const happening = isCampaign && place.data_inicio <= today
@@ -197,7 +205,8 @@ function PlaceCard({ place, onPress }) {
               bg={happening ? colors.primarySoft : colors.infoSoft}
             />
           ) : null}
-          {place.gratuito ? <Badge text="Gratuito" color={colors.warning} bg={colors.warningSoft} /> : null}
+          {org ? <Badge text={org.label} color={org.color} bg={org.bg} /> : null}
+          {place.gratuito && !org ? <Badge text="Gratuito" color={colors.warning} bg={colors.warningSoft} /> : null}
         </View>
       </View>
       <Feather name="chevron-right" size={20} color={colors.textLight} />

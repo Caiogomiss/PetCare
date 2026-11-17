@@ -113,6 +113,14 @@ create table if not exists public.places (
   created_at timestamptz not null default now()
 );
 
+-- Campos das ONGs e protetores independentes
+alter table public.places add column if not exists tipo_org text;
+alter table public.places add column if not exists formas_apoio text[];
+alter table public.places add column if not exists horario text;
+alter table public.places add column if not exists necessidades text;
+alter table public.places drop constraint if exists places_tipo_org_check;
+alter table public.places add constraint places_tipo_org_check check (tipo_org is null or tipo_org in ('ong', 'protetor'));
+
 -- ---------- Orientações sobre cuidados ----------
 create table if not exists public.guides (
   id uuid primary key default gen_random_uuid(),
