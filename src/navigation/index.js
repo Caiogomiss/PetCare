@@ -11,6 +11,8 @@ import { colors, font } from '../theme'
 
 import LoginScreen from '../screens/auth/LoginScreen'
 import RegisterScreen from '../screens/auth/RegisterScreen'
+import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen'
+import NewPasswordScreen from '../screens/auth/NewPasswordScreen'
 import HomeScreen from '../screens/HomeScreen'
 import ServicesScreen from '../screens/services/ServicesScreen'
 import PlaceDetailScreen from '../screens/services/PlaceDetailScreen'
@@ -64,7 +66,7 @@ function Tabs() {
 }
 
 export default function RootNavigator() {
-  const { user, loading } = useAuth()
+  const { user, loading, recovery } = useAuth()
 
   if (loading) {
     return (
@@ -77,10 +79,13 @@ export default function RootNavigator() {
   return (
     <NavigationContainer theme={navTheme}>
       <Stack.Navigator screenOptions={stackOptions}>
-        {!user ? (
+        {recovery ? (
+          <Stack.Screen name="NewPassword" component={NewPasswordScreen} options={{ headerShown: false }} />
+        ) : !user ? (
           <>
             <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
             <Stack.Screen name="Register" component={RegisterScreen} options={{ title: '' }} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{ title: '' }} />
           </>
         ) : (
           <>

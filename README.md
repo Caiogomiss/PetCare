@@ -26,8 +26,9 @@ Escaneie o QR code com o app **Expo Go**. Sem configurar nada, o app abre em **m
 1. Crie um projeto em supabase.com.
 2. No **SQL Editor**, rode `supabase/schema.sql` e depois `supabase/seed.sql`. Os dois podem ser rodados de novo sem apagar dados.
 3. Em **Authentication > Sign In / Providers > Email**, desligue **Confirm email** (assim o cadastro entra direto, sem precisar abrir e-mail). Se deixar ligado, o app avisa para confirmar o e-mail antes do login.
-4. Copie `.env.example` para `.env` e preencha `EXPO_PUBLIC_SUPABASE_URL` e `EXPO_PUBLIC_SUPABASE_ANON_KEY` (Project Settings > API).
-5. Reinicie o `npx expo start`.
+4. Em **Authentication > URL Configuration**, coloque o endereço do site (`https://caiogomiss.github.io/PetCare/`) em **Site URL** e em **Redirect URLs**. É para onde o link de "Esqueci minha senha" leva.
+5. Copie `.env.example` para `.env` e preencha `EXPO_PUBLIC_SUPABASE_URL` e `EXPO_PUBLIC_SUPABASE_ANON_KEY` (Project Settings > API).
+6. Reinicie o `npx expo start`.
 
 A chave `anon` é pública. Quem protege os dados são as regras (RLS) do `schema.sql`: cada tutor só vê os próprios pets, registros e lembretes; alertas são visíveis para todos os usuários logados; serviços e orientações são só leitura. **Nunca** coloque a chave `service_role` no app.
 

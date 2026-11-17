@@ -2,7 +2,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ONLINE_MODE } from '../config'
 import { MSG } from '../constants/messages'
-import { sb } from '../lib/supabase'
+import { sb, recoveryFromUrl, RESET_REDIRECT } from '../lib/supabase'
 import { setDbUser } from '../lib/db'
 import { readJson, writeJson, removeKey, uuid } from '../lib/storage'
 
@@ -57,6 +57,12 @@ const localAuth = {
   },
   async signOut() {
     await removeKey('session')
+  },
+  async resetPassword() {
+    throw new Error('No modo local não há envio de e-mail. Crie uma nova conta neste aparelho.')
+  },
+  async updatePassword() {
+    throw new Error('Indisponível no modo local.')
   },
   async updateProfile(userId, patch) {
     const accounts = await readJson('accounts', [])
@@ -118,6 +124,18 @@ const onlineAuth = {
   async signOut() {
     await sb.auth.signOut().catch(() => {})
   },
+  async resetPassword(email) {
+    const { error } = await sb.auth.resetPasswordForEmail(email.trim().toLowerCase(), { redirectTo: RESET_REDIRECT })
+    if (error) throw authError(error)
+  },
+  async updatePassword(senha) {
+    const { error } = await sb.auth.updateUser({ password: senha })
+    if (error) {
+      const msg = String(error.message || '').toLowerCase()
+      if (msg.includes('different from the old')) throw new Error('A nova senha precisa ser diferente da anterior.')
+      throw authError(error)
+    }
+  },
   async updateProfile(userId, patch) {
     const { data, error } = await sb.from('profiles').update(patch).eq('id', userId).select().single()
     if (error) throw authError(error)
@@ -132,6 +150,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [recovery, setRecovery] = useState(ONLINE_MODE && recoveryFromUrl)
 
   const apply = useCallback((res) => {
     setDbUser(res?.user?.id || null)
@@ -151,6 +170,7 @@ export function AuthProvider({ children }) {
     // Sessão expirada ou encerrada em outro lugar
     const { data } = sb.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') apply(null)
+      if (event === 'PASSWORD_RECOVERY') setRecovery(true)
     })
     return () => {
       alive = false
@@ -164,6 +184,7 @@ export function AuthProvider({ children }) {
       profile,
       loading,
       onlineMode: ONLINE_MODE,
+      recovery,
       async signIn(payload) {
         const res = await api.signIn(payload)
         apply(res)
@@ -178,13 +199,25 @@ export function AuthProvider({ children }) {
         await api.signOut()
         apply(null)
       },
+      async resetPassword(email) {
+        await api.resetPassword(email)
+      },
+      async updatePassword(senha) {
+        await api.updatePassword(senha)
+        setRecovery(false)
+      },
+      async cancelRecovery() {
+        setRecovery(false)
+        await api.signOut()
+        apply(null)
+      },
       async updateProfile(patch) {
         const p = await api.updateProfile(user.id, patch)
         setProfile(p)
         return p
       },
     }),
-    [user, profile, loading, apply]
+    [user, profile, loading, recovery, apply]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

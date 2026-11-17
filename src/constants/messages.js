@@ -26,5 +26,8 @@ export const MSG = {
   OFFLINE: 'Sem conexão com a internet. Tente de novo quando a conexão voltar.',
   OFFLINE_CACHE: 'Sem conexão. Mostrando os últimos dados salvos no aparelho.',
   CONFIRM_EMAIL: 'Enviamos um link de confirmação para o seu e-mail. Confirme e depois faça login.',
+  RESET_SENT: 'Se este e-mail estiver cadastrado, você vai receber um link para criar uma nova senha. Confira também a caixa de spam.',
+  RESET_DONE: 'Senha alterada com sucesso.',
+  RESET_LINK_INVALID: 'O link para trocar a senha venceu ou já foi usado. Peça um novo em "Esqueci minha senha".',
   GENERIC: 'Algo deu errado. Tente de novo em instantes.',
 }

@@ -6,6 +6,7 @@ import Screen from '../../components/Screen'
 import { Button, FormError, Input, Muted, PasswordInput, Title } from '../../components/ui'
 import { useAuth } from '../../context/AuthContext'
 import { MSG } from '../../constants/messages'
+import { linkErrorFromUrl } from '../../lib/supabase'
 import { isValidEmail } from '../../lib/format'
 import { colors, font, fontSize, radius, spacing } from '../../theme'
 
@@ -14,7 +15,7 @@ export default function LoginScreen({ navigation, route }) {
   const [email, setEmail] = useState(route.params?.email || '')
   const [senha, setSenha] = useState('')
   const [errors, setErrors] = useState({})
-  const [formError, setFormError] = useState(route.params?.notice || '')
+  const [formError, setFormError] = useState(route.params?.notice || (linkErrorFromUrl ? MSG.RESET_LINK_INVALID : ''))
   const [loading, setLoading] = useState(false)
 
   // Volta do cadastro com aviso (ex.: confirmar e-mail)
@@ -70,8 +71,11 @@ export default function LoginScreen({ navigation, route }) {
         returnKeyType="next"
       />
       <PasswordInput label="Senha" value={senha} onChangeText={setSenha} error={errors.senha} icon="lock" placeholder="Sua senha" onSubmitEditing={submit} returnKeyType="go" />
+      <Pressable onPress={() => navigation.navigate('ForgotPassword', { email })} style={styles.forgot} accessibilityRole="button" hitSlop={8}>
+        <Text style={styles.forgotText}>Esqueci minha senha</Text>
+      </Pressable>
 
-      <Button title="Entrar" onPress={submit} loading={loading} style={{ marginTop: spacing.sm }} />
+      <Button title="Entrar" onPress={submit} loading={loading} />
 
       <Pressable onPress={() => navigation.navigate('Register')} style={styles.switch} accessibilityRole="button">
         <Text style={styles.switchText}>
@@ -93,6 +97,8 @@ const styles = StyleSheet.create({
   brand: { alignItems: 'center', marginTop: spacing.xxl, marginBottom: spacing.xxl },
   logo: { width: 68, height: 68, borderRadius: radius.xl, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.md },
   brandName: { fontFamily: font.bold, fontSize: 28, color: colors.text, marginBottom: 4 },
+  forgot: { alignSelf: 'flex-end', marginTop: -spacing.sm, marginBottom: spacing.lg, paddingVertical: 4 },
+  forgotText: { fontFamily: font.semibold, fontSize: fontSize.sm, color: colors.primary },
   switch: { alignItems: 'center', paddingVertical: spacing.xl },
   switchText: { fontFamily: font.regular, fontSize: fontSize.md, color: colors.textMuted },
   localNote: { flexDirection: 'row', alignItems: 'center', gap: 6, justifyContent: 'center' },
